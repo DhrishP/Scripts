@@ -16,7 +16,7 @@ on:
 
 jobs:
   store-env:
-    uses: your-username/env-storage/.github/workflows/store-env-reusable.yml@main
+    uses: DhrishP/env-storage/.github/workflows/store-env-reusable.yml@main
     secrets:
       ENV_PAT: ${{ secrets.ENV_PAT }}
 '@
