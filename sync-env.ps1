@@ -1,17 +1,13 @@
 # PowerShell script to sync .env files to env-storage repository
 
 param(
-    [Parameter(Mandatory=$true)]
-    [string]$SourceDirectory
+    [Parameter(Mandatory=$false)]
+    [string]$SourceDirectory = (Get-Location).Path
 )
 
 $EnvStorageDir = "C:\Code\utilities\env-storage"
 
-# Check if source directory exists
-if (-not (Test-Path $SourceDirectory)) {
-    Write-Error "Error: Source directory $SourceDirectory does not exist"
-    exit 1
-}
+Write-Host "Searching for .env files in: $SourceDirectory" -ForegroundColor Cyan
 
 # Check if env-storage directory exists
 if (-not (Test-Path $EnvStorageDir)) {
@@ -37,6 +33,8 @@ try {
         exit 1
     }
 
+    Write-Host "Found $($envFiles.Count) .env file(s)" -ForegroundColor Green
+
     # Process each .env file
     foreach ($file in $envFiles) {
         # Get relative path from source directory
@@ -50,7 +48,7 @@ try {
 
         # Copy the file
         Copy-Item -Path $file.FullName -Destination $destPath
-        Write-Host "Copied: $($file.FullName) -> $newFileName"
+        Write-Host "Copied: $($file.FullName) -> $newFileName" -ForegroundColor Gray
     }
 
     # Move to env-storage directory
@@ -74,7 +72,7 @@ try {
         git commit -m "Update environment variables $timestamp"
         git push
 
-        Write-Host "Environment variables successfully synced to env-storage repository"
+        Write-Host "`nEnvironment variables successfully synced to env-storage repository" -ForegroundColor Green
     }
     finally {
         # Return to original directory
@@ -88,5 +86,6 @@ finally {
     }
 }
 
-Write-Host "`nUsage example:"
-Write-Host ".\sync-env.ps1 -SourceDirectory 'C:\Code\telegram-bots'" 
+Write-Host "`nUsage examples:"
+Write-Host "1. Search in current directory: .\sync-env.ps1"
+Write-Host "2. Search in specific directory: .\sync-env.ps1 -SourceDirectory 'C:\Code\telegram-bots'" 
