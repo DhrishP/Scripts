@@ -21,6 +21,9 @@ function Clean-FolderName {
     return $folderPath.Replace('\', '-').Replace(' ', '_')
 }
 
+# Get base directory name
+$baseDirectoryName = (Get-Item $SourceDirectory).Name
+
 # Create a temporary directory
 $TempDir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "env-sync-$(Get-Random)") -Force
 
@@ -43,7 +46,12 @@ try {
         $cleanDir = Clean-FolderName $dirPath
         
         # Create new file name with directory prefix
-        $newFileName = if ($cleanDir) { "${cleanDir}.env" } else { "root.env" }
+        $newFileName = if ($cleanDir) { 
+            "${cleanDir}.env" 
+        } else { 
+            # Use the base directory name instead of "root"
+            "${baseDirectoryName}.env"
+        }
         $destPath = Join-Path $TempDir $newFileName
 
         # Copy the file
