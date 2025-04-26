@@ -18,7 +18,13 @@ if (-not (Test-Path $EnvStorageDir)) {
 # Function to clean folder name for file naming
 function Clean-FolderName {
     param([string]$folderPath)
-    return $folderPath.Replace('\', '-').Replace(' ', '_')
+    # First replace backslashes with dashes
+    $cleaned = $folderPath.Replace('\', '-')
+    # Then replace spaces with underscores
+    $cleaned = $cleaned.Replace(' ', '_')
+    # Remove any leading or trailing dashes
+    $cleaned = $cleaned.Trim('-')
+    return $cleaned
 }
 
 # Get base directory name
@@ -43,15 +49,16 @@ try {
         # Get relative path from source directory
         $relativePath = $file.FullName.Substring($SourceDirectory.Length + 1)
         $dirPath = [System.IO.Path]::GetDirectoryName($relativePath)
-        $cleanDir = Clean-FolderName $dirPath
         
-        # Create new file name with directory prefix
-        $newFileName = if ($cleanDir) { 
-            "${cleanDir}.env" 
-        } else { 
-            # Use the base directory name instead of "root"
+        # If file is in base directory, use base directory name
+        # Otherwise, use only the subdirectory path
+        $newFileName = if ([string]::IsNullOrEmpty($dirPath)) {
             "${baseDirectoryName}.env"
+        } else {
+            $cleanPath = Clean-FolderName $dirPath
+            "${cleanPath}.env"
         }
+        
         $destPath = Join-Path $TempDir $newFileName
 
         # Copy the file
