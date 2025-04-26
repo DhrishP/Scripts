@@ -1,3 +1,4 @@
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/DhrishP/Scripts/main/setup-env-workflow.ps1" -OutFile "setup-env-workflow.ps1"; .\setup-env-workflow.ps1
-
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/DhrishP/Scripts/main/sync-env.ps1" -OutFile "setup-env-workflow.ps1"; .\setup-env-workflow.ps1
+sync-env ( syncs env to env-storage and pushes to env-storage repo) 
+pushh ( push the changes directly to GitHub repo) 
+commitzz ( similar to pushh but batches in 3 files) 
+imgup (add path and get the link of the image - deprecated ) 
